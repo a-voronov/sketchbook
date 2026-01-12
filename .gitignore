@@ -39,3 +39,9 @@
 
 # debug information files
 *.dwo
+
+# OF / VS Code
+*/**/.vscode/browse.db*
+*/**/obj
+openFrameworks-Info.plist
+
