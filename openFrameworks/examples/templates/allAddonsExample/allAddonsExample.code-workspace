@@ -1,0 +1,39 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "${workspaceRoot}/../../../../libs/openFrameworks"
+		},
+		{
+			"path": "${workspaceRoot}/../../../../addons/ofxAssimpModelLoader"
+		},
+		{
+			"path": "${workspaceRoot}/../../../../addons/ofxGui"
+		},
+		{
+			"path": "${workspaceRoot}/../../../../addons/ofxKinect"
+		},
+		{
+			"path": "${workspaceRoot}/../../../../addons/ofxNetwork"
+		},
+		{
+			"path": "${workspaceRoot}/../../../../addons/ofxOpenCv"
+		},
+		{
+			"path": "${workspaceRoot}/../../../../addons/ofxOsc"
+		},
+		{
+			"path": "${workspaceRoot}/../../../../addons/ofxSvg"
+		},
+		{
+			"path": "${workspaceRoot}/../../../../addons/ofxThreadedImageLoader"
+		},
+		{
+			"path": "${workspaceRoot}/../../../../addons/ofxXmlSettings"
+		}
+	],
+	"openFrameworksProjectGeneratorVersion": "0.103.0",
+	"settings": {}
+}
