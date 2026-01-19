@@ -4,14 +4,17 @@
 //========================================================================
 int main( ){
 
-	//Use ofGLFWWindowSettings for more options like multi-monitor fullscreen
-	ofGLWindowSettings settings;
-	settings.setSize(1024, 768);
-	settings.windowMode = OF_WINDOW; //can also be OF_FULLSCREEN
+    //Use ofGLFWWindowSettings for more options like multi-monitor fullscreen
+    ofGLWindowSettings settings;
+    settings.setSize(1024, 768);
+    // // causes flickering with ofSetBackgroundAuto(false) otherwise,
+    // // however it's ok to use single buffer since we're not re-rendering whole screen every frame
+    // settings.doubleBuffering = false;
+    settings.windowMode = OF_WINDOW; //can also be OF_FULLSCREEN
 
-	auto window = ofCreateWindow(settings);
+    auto window = ofCreateWindow(settings);
 
-	ofRunApp(window, std::make_shared<ofApp>());
-	ofRunMainLoop();
+    ofRunApp(window, std::make_shared<ofApp>());
+    ofRunMainLoop();
 
 }
