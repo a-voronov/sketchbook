@@ -1,8 +1,5 @@
 #include "cell.h"
 
-Cell::Cell(int r, int c)
-    : row(r), column(c) {}
-
 void Cell::link(Cell* other, bool bidi) {
     if (!other || other == this) return;
 
@@ -26,10 +23,6 @@ void Cell::unlink(Cell* other, bool bidi) {
 
 bool Cell::is_linked(const Cell& other) const {
     return find(links_.begin(), links_.end(), &other) != links_.end();
-}
-
-const vector<const Cell*>& Cell::links() const {
-    return links_;
 }
 
 vector<const Cell*> Cell::neighbors() const {

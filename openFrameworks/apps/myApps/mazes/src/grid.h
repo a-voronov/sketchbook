@@ -1,26 +1,28 @@
 #pragma once
 
 #include "cell.h"
+#include <functional>
 #include <random>
 
 using namespace std;
 
 struct Grid {
 public:
-    Grid(int r, int c);
+    Grid(int rows, int columns);
 
-    template<class F>
-    void each_cell(F&& f);
+    int rows() const    { return rows_; }
+    int columns() const { return columns_; }
+    int size() const    { return rows_ * columns_; }
 
-    int size() const;
+    void each_cell(const std::function<void(Cell&)>& lambda);
+    Cell* cell_at(int row, int column) const;
+    Cell& random_cell(std::mt19937& rng) const;
 
 private:
     int rows_, columns_;
-    // Grid owns cells, so we store them as unique_ptr and pass around raw pointers for temporary access to cells
+    // Grid owns cells, so we store them as unique_ptr
+    // and pass around raw pointers for temporary access to the cells
     vector<vector<unique_ptr<Cell>>> grid_;
-
-    const Cell* cell_at(int row, int column) const;
-    const Cell& random_cell(std::mt19937& rng) const;
 
     void prepare_grid();
     void configure_cells();
