@@ -1,1 +1,30 @@
-# sketchbook
+# Sketchbook
+
+Creative coding experiments using [OpenFrameworks](https://openframeworks.cc).
+
+---
+
+### [Mazes](openFrameworks/apps/myApps/mazes)
+
+Generating various mazes based on [Mazes for Programmers](https://pragprog.com/titles/jbmaze/mazes-for-programmers/) book.
+
+#### Binary Tree
+```
++---+---+---+---+---+---+---+---+
+|                               |
++   +---+   +   +   +   +---+   +
+|   |       |   |   |   |       |
++---+---+---+   +---+   +---+   +
+|               |       |       |
++---+---+---+---+---+---+   +   +
+|                           |   |
++---+---+---+   +---+   +   +   +
+|               |       |   |   |
++   +   +---+---+---+---+---+   +
+|   |   |                       |
++---+---+   +---+   +---+   +   +
+|           |       |       |   |
++---+   +   +   +   +   +   +   +
+|       |   |   |   |   |   |   |
++---+---+---+---+---+---+---+---+
+```
