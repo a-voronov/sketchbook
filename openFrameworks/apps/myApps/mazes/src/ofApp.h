@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofMain.h"
+#include <random>
 
 class ofApp : public ofBaseApp{
 
@@ -22,4 +23,6 @@ class ofApp : public ofBaseApp{
         void windowResized(int w, int h) override;
         void dragEvent(ofDragInfo dragInfo) override;
         void gotMessage(ofMessage msg) override;
+
+        std::mt19937 rng;
 };

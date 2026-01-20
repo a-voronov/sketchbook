@@ -1,10 +1,17 @@
 #include "ofApp.h"
 #include "grid.h"
+#include "binaryTree.h"
 
 //--------------------------------------------------------------
 void ofApp::setup(){
     ofSetFrameRate(60);
     ofSetVerticalSync(true);
+
+    rng = std::mt19937{std::random_device{}()};
+    // rng = std::mt19937{42};
+    Grid grid{8, 8};
+    BinaryTree::on(grid, rng);
+    cout << grid << endl;
 }
 
 //--------------------------------------------------------------
