@@ -1,4 +1,15 @@
 #include "grid.h"
+#include <string>
+
+namespace {
+string repeat(string_view s, size_t n) {
+    string out;
+    out.reserve(s.size() * n);
+    for (size_t i = 0; i < n; ++i)
+        out += s;
+    return out;
+}
+}
 
 Grid::Grid(int rows, int columns)
     : rows_(rows), columns_(columns) {
@@ -49,4 +60,31 @@ void Grid::configure_cells() {
         cell.west  = cell_at(row, column - 1);
         cell.east  = cell_at(row, column + 1);
     });
+}
+
+// ASCII grid output
+std::ostream& operator<<(std::ostream& os, const Grid& grid) {
+    os << "+" << repeat("---+", grid.columns()) << "\n";
+
+    const string body = "   ";
+    const string corner = "+";
+
+    for (int row = 0; row < grid.rows(); ++row) {
+        string top = "|";
+        string bottom = "+";
+
+        for (int col = 0; col < grid.columns(); ++col) {
+            const Cell* cell = grid.cell_at(row, col);
+
+            const string east_boundary = cell->is_linked(cell->east) ? " " : "|";
+            top += body + east_boundary;
+
+            const string south_boundary = cell->is_linked(cell->south) ? "   " : "---";
+            bottom += south_boundary + corner;
+        }
+
+        os << top << "\n";
+        os << bottom << "\n";
+    }
+    return os;
 }

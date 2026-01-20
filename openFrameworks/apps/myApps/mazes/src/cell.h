@@ -22,7 +22,7 @@ public:
 
     void link(Cell* other, bool bidi = true);
     void unlink(Cell* other, bool bidi = true);
-    bool is_linked(const Cell& other) const;
+    bool is_linked(const Cell* other) const;
 
     // returning const& since this method serves as a read-only-view of underlying links_ member property,
     // so we don't make a copy and don't allow mutation of it

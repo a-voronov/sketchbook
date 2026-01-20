@@ -21,8 +21,10 @@ void Cell::unlink(Cell* other, bool bidi) {
         other->unlink(this, false);
 }
 
-bool Cell::is_linked(const Cell& other) const {
-    return find(links_.begin(), links_.end(), &other) != links_.end();
+bool Cell::is_linked(const Cell* other) const {
+    if (!other || other == this) return false;
+    // auto ref_other = *other;
+    return find(links_.begin(), links_.end(), other) != links_.end();
 }
 
 vector<const Cell*> Cell::neighbors() const {

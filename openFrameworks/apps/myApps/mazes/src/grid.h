@@ -3,6 +3,7 @@
 #include "cell.h"
 #include <functional>
 #include <random>
+#include <ostream>
 
 using namespace std;
 
@@ -27,3 +28,5 @@ private:
     void prepare_grid();
     void configure_cells();
 };
+
+std::ostream& operator<<(std::ostream& os, const Grid& grid);
