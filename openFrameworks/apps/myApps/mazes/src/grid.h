@@ -10,6 +10,7 @@ using namespace std;
 struct Grid {
 public:
     Grid(int rows, int columns);
+    Grid() : Grid(0, 0) {};
 
     int rows() const    { return rows_; }
     int columns() const { return columns_; }
@@ -18,6 +19,8 @@ public:
     void each_cell(const std::function<void(Cell&)>& lambda);
     Cell* cell_at(int row, int column) const;
     Cell& random_cell(std::mt19937& rng) const;
+
+    void draw(int cell_size = 10);
 
 private:
     int rows_, columns_;

@@ -1,5 +1,4 @@
 #include "ofApp.h"
-#include "grid.h"
 #include "binaryTree.h"
 #include "sidewinder.h"
 
@@ -10,7 +9,7 @@ void ofApp::setup(){
 
     rng = std::mt19937{std::random_device{}()};
     // rng = std::mt19937{42};
-    Grid grid{8, 8};
+    grid = Grid{8, 8};
     // BinaryTree::on(grid, rng);
     Sidewinder::on(grid, rng);
     cout << grid << endl;
@@ -23,7 +22,7 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-
+    grid.draw(50);
 }
 
 //--------------------------------------------------------------
