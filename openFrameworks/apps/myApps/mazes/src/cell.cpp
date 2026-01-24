@@ -23,7 +23,7 @@ void Cell::unlink(Cell* other, bool bidi) {
 
 bool Cell::is_linked(const Cell* other) const {
     if (!other || other == this) return false;
-    // auto ref_other = *other;
+
     return find(links_.begin(), links_.end(), other) != links_.end();
 }
 
