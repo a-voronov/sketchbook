@@ -1,16 +1,6 @@
 #include "grid.h"
 #include "ofMain.h"
-#include <string>
-
-namespace {
-string repeat(string_view s, size_t n) {
-    string out;
-    out.reserve(s.size() * n);
-    for (size_t i = 0; i < n; ++i)
-        out += s;
-    return out;
-}
-}
+#include "mazeUtils.h"
 
 Grid::Grid(int rows, int columns)
     : rows_(rows), columns_(columns) {
@@ -90,11 +80,14 @@ void Grid::draw(int cell_size) {
     }
 }
 
+string Grid::contents_of(const Cell& cell) const {
+    return " ";
+}
+
 // ASCII grid output
 std::ostream& operator<<(std::ostream& os, const Grid& grid) {
     os << "+" << repeat("---+", grid.columns()) << "\n";
 
-    const string body = "   ";
     const string corner = "+";
 
     for (int row = 0; row < grid.rows(); ++row) {
@@ -103,6 +96,7 @@ std::ostream& operator<<(std::ostream& os, const Grid& grid) {
 
         for (int col = 0; col < grid.columns(); ++col) {
             const Cell* cell = grid.cell_at(row, col);
+            const string body = " " + grid.contents_of(*cell) + " ";
 
             const string east_boundary = cell->is_linked(cell->east) ? " " : "|";
             top += body + east_boundary;

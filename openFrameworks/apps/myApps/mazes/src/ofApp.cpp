@@ -9,9 +9,13 @@ void ofApp::setup(){
 
     rng = std::mt19937{std::random_device{}()};
     // rng = std::mt19937{42};
-    grid = Grid{8, 8};
+    grid = DistanceGrid{8, 8};
     // BinaryTree::on(grid, rng);
     Sidewinder::on(grid, rng);
+
+    auto distances = grid.cell_at(0, 0)->distances();
+    grid.distances = make_unique<Distances>(distances);
+
     cout << grid << endl;
 }
 

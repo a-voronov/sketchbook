@@ -1,4 +1,5 @@
 #include "cell.h"
+#include "distances.h"
 
 void Cell::link(Cell* other, bool bidi) {
     if (!other || other == this) return;
@@ -35,4 +36,26 @@ vector<const Cell*> Cell::neighbors() const {
     if (east  != nullptr) result.push_back(east);
     if (west  != nullptr) result.push_back(west);
     return result;
+}
+
+Distances Cell::distances() {
+    Distances distances{*this};
+    vector<const Cell*> frontier{this};
+
+    while (!frontier.empty()) {
+        vector<const Cell*> new_frontier{};
+
+        for (auto cell : frontier) {
+            for (auto linked : cell->links()) {
+                if (distances.get(*linked) == -1) {
+                    distances.set(*linked, distances.get(*cell) + 1);
+                    new_frontier.emplace_back(linked);
+                }
+            }
+        }
+
+        frontier = new_frontier;
+    }
+
+    return distances;
 }

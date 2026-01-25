@@ -1,9 +1,10 @@
 #pragma once
 
-#include <memory>
 #include <vector>
 
 using namespace std;
+
+struct Distances;
 
 // Cell doesn't own other cells, and all cells exist within a common Grid,
 // hence raw pointers are used here to refer to neighboring and linked cells
@@ -20,7 +21,9 @@ public:
     int row() const    { return row_; }
     int column() const { return column_; }
 
+    // passing Cell* because we want to pass nullptr (single place to handle absence of value), and because `other` can be mutated
     void link(Cell* other, bool bidi = true);
+    // passing Cell* because we want to pass nullptr (single place to handle absence of value), and because `other` can be mutated
     void unlink(Cell* other, bool bidi = true);
     bool is_linked(const Cell* other) const;
 
@@ -31,6 +34,14 @@ public:
     // so the caller owns it and can do whatever they want with it
     vector<const Cell*> neighbors() const;
 
+    // returning Distances as a value since it's a computed data which has no prior owner,
+    // so the caller owns it and can do whatever they want with it
+    Distances distances();
+
+    bool operator==(const Cell& other) const {
+        return row_== other.row_ && column_ == other.column_;
+    }
+
 private:
     int row_, column_;
 
@@ -38,3 +49,13 @@ private:
     // keeping cells as const* because we don't need to mutate linked cells
     vector<const Cell*> links_;
 };
+
+namespace std {
+    template <>
+    struct hash<Cell> {
+        size_t operator()(const Cell& cell) const {
+            return hash<int>()(cell.row())
+                ^ hash<int>()(cell.column());
+        }
+    };
+}

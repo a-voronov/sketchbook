@@ -1,9 +1,12 @@
 #pragma once
 
-#include "cell.h"
+#include <string>
+#include <memory>
 #include <functional>
 #include <random>
 #include <ostream>
+
+#include "cell.h"
 
 using namespace std;
 
@@ -21,6 +24,7 @@ public:
     Cell& random_cell(std::mt19937& rng) const;
 
     void draw(int cell_size = 10);
+    virtual string contents_of(const Cell& cell) const;
 
 private:
     int rows_, columns_;

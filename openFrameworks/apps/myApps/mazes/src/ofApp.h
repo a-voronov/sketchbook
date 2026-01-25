@@ -1,8 +1,9 @@
 #pragma once
 
-#include "ofMain.h"
-#include "grid.h"
 #include <random>
+
+#include "ofMain.h"
+#include "distanceGrid.h"
 
 class ofApp : public ofBaseApp{
 
@@ -26,5 +27,5 @@ class ofApp : public ofBaseApp{
         void gotMessage(ofMessage msg) override;
 
         std::mt19937 rng;
-        Grid grid;
+        DistanceGrid grid;
 };
