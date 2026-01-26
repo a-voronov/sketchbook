@@ -15,7 +15,11 @@ void ofApp::setup(){
 
     auto distances = grid.cell_at(0, 0)->distances();
     grid.distances = make_unique<Distances>(distances);
+    cout << grid << endl;
 
+    cout << "path from northwest corner to southwest corner:" << endl;
+    const auto south_west = grid.cell_at(grid.rows() - 1, 0);
+    grid.distances = make_unique<Distances>(distances.path_to(*south_west));
     cout << grid << endl;
 }
 

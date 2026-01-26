@@ -47,7 +47,7 @@ Distances Cell::distances() {
 
         for (auto cell : frontier) {
             for (auto linked : cell->links()) {
-                if (distances.get(*linked) == -1) {
+                if (distances.get(*linked) < 0) {
                     distances.set(*linked, distances.get(*cell) + 1);
                     new_frontier.emplace_back(linked);
                 }

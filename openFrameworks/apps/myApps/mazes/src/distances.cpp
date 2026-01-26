@@ -23,3 +23,22 @@ vector<const Cell*> Distances::cells() const {
         result.push_back(kv.first);
     return result;
 }
+
+Distances Distances::path_to(const Cell& goal) const {
+    const Cell* current = &goal;
+
+    Distances breadcrumbs{*root_};
+    breadcrumbs.set(*current, get(*current));
+
+    while (current != root_) {
+        for (auto neighbor : current->links()) {
+            if (get(*neighbor) < get(*current)) {
+                breadcrumbs.set(*neighbor, get(*neighbor));
+                current = neighbor;
+                break;
+            }
+        }
+    }
+
+    return breadcrumbs;
+}

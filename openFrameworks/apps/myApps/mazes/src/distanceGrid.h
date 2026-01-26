@@ -16,7 +16,7 @@ public:
     string contents_of(const Cell& cell) const override {
         if (distances) {
             int distance = distances->get(cell);
-            if (distance != -1) {
+            if (distance >= 0) {
                 return to_base36(distance);
             }
         }
