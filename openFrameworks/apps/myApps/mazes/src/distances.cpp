@@ -19,7 +19,7 @@ void Distances::set(const Cell& cell, int distance) {
 vector<const Cell*> Distances::cells() const {
     vector<const Cell*> result{};
     result.reserve(cells_.size());
-    for (const auto& kv : cells_)
+    for (auto& kv : cells_)
         result.push_back(kv.first);
     return result;
 }
@@ -39,6 +39,18 @@ Distances Distances::path_to(const Cell& goal) const {
             }
         }
     }
-
     return breadcrumbs;
+}
+
+pair<const Cell*, int> Distances::max() const {
+    int max_distance = 0;
+    const Cell* max_cell = root_;
+
+    for (auto& [cell, distance] : cells_) {
+        if (distance > max_distance) {
+            max_cell = cell;
+            max_distance = distance;
+        }
+    }
+    return {max_cell, max_distance};
 }

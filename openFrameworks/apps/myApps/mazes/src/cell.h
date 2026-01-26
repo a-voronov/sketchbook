@@ -36,7 +36,7 @@ public:
 
     // returning Distances as a value since it's a computed data which has no prior owner,
     // so the caller owns it and can do whatever they want with it
-    Distances distances();
+    Distances distances() const;
 
     bool operator==(const Cell& other) const {
         return row_== other.row_ && column_ == other.column_;

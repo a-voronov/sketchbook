@@ -13,14 +13,27 @@ void ofApp::setup(){
     // BinaryTree::on(grid, rng);
     Sidewinder::on(grid, rng);
 
-    auto distances = grid.cell_at(0, 0)->distances();
+    auto start = grid.cell_at(0, 0);
+    auto distances = start->distances();
+    auto [new_start, _] = distances.max();
+
     grid.distances = make_unique<Distances>(distances);
     cout << grid << endl;
 
-    cout << "path from northwest corner to southwest corner:" << endl;
-    const auto south_west = grid.cell_at(grid.rows() - 1, 0);
-    grid.distances = make_unique<Distances>(distances.path_to(*south_west));
+    auto new_distances = new_start->distances();
+    auto [goal, _] = new_distances.max();
+
+    grid.distances = make_unique<Distances>(new_distances.path_to(*goal));
     cout << grid << endl;
+
+    // auto distances = grid.cell_at(0, 0)->distances();
+    // grid.distances = make_unique<Distances>(distances);
+    // cout << grid << endl;
+
+    // cout << "path from northwest corner to southwest corner:" << endl;
+    // const auto south_west = grid.cell_at(grid.rows() - 1, 0);
+    // grid.distances = make_unique<Distances>(distances.path_to(*south_west));
+    // cout << grid << endl;
 }
 
 //--------------------------------------------------------------

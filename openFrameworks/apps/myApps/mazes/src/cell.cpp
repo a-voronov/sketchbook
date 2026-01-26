@@ -38,7 +38,7 @@ vector<const Cell*> Cell::neighbors() const {
     return result;
 }
 
-Distances Cell::distances() {
+Distances Cell::distances() const {
     Distances distances{*this};
     vector<const Cell*> frontier{this};
 
