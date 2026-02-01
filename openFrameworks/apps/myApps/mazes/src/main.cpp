@@ -10,7 +10,7 @@ int main( ){
     // // causes flickering with ofSetBackgroundAuto(false) otherwise,
     // // however it's ok to use single buffer since we're not re-rendering whole screen every frame
     // settings.doubleBuffering = false;
-    settings.windowMode = OF_WINDOW; //can also be OF_FULLSCREEN
+    settings.windowMode = OF_FULLSCREEN; //can also be OF_WINDOW
 
     auto window = ofCreateWindow(settings);
 

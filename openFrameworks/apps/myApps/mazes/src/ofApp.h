@@ -3,7 +3,8 @@
 #include <random>
 
 #include "ofMain.h"
-#include "distanceGrid.h"
+#include "ofxGui.h"
+#include "colorGrid.h"
 
 class ofApp : public ofBaseApp{
 
@@ -27,5 +28,9 @@ class ofApp : public ofBaseApp{
         void gotMessage(ofMessage msg) override;
 
         std::mt19937 rng;
-        DistanceGrid grid;
+        ColorGrid grid;
+
+        ofxPanel gui;
+        ofParameter<ofColor> picked_color;
+        ofxFloatSlider picked_intensity_stretch;
 };

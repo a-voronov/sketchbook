@@ -7,29 +7,45 @@ void ofApp::setup(){
     ofSetFrameRate(60);
     ofSetVerticalSync(true);
 
+    gui.setup();
+    gui.add(picked_color.set("color", ofColor::lightGreen, ofColor(0, 0, 0), ofColor(255 , 255, 255)));
+    gui.add(picked_intensity_stretch.setup("intensity", 0.75f, 0.0f, 1.0f));
+
     rng = std::mt19937{std::random_device{}()};
     // rng = std::mt19937{42};
-    grid = DistanceGrid{8, 8};
+    grid = ColorGrid{28, 42};
     // BinaryTree::on(grid, rng);
     Sidewinder::on(grid, rng);
 
-    auto start = grid.cell_at(0, 0);
+    // MARK: ColoredGrid
+
+    auto start = grid.cell_at(grid.rows() / 2, grid.columns() / 2);
     auto distances = start->distances();
-    auto [new_start, _] = distances.max();
 
-    grid.distances = make_unique<Distances>(distances);
+    grid.set_distances(distances);
     cout << grid << endl;
 
-    auto new_distances = new_start->distances();
-    auto [goal, _] = new_distances.max();
+    // MARK: DistanceGrid
 
-    grid.distances = make_unique<Distances>(new_distances.path_to(*goal));
-    cout << grid << endl;
+    // auto start = grid.cell_at(0, 0);
+    // auto distances = start->distances();
+    // auto [new_start, _] = distances.max();
+    //
+    // grid.distances = make_unique<Distances>(distances);
+    // cout << grid << endl;
+    //
+    // auto new_distances = new_start->distances();
+    // auto [goal, _] = new_distances.max();
+    //
+    // grid.distances = make_unique<Distances>(new_distances.path_to(*goal));
+    // cout << grid << endl;
+
+    // MARK: Grid
 
     // auto distances = grid.cell_at(0, 0)->distances();
     // grid.distances = make_unique<Distances>(distances);
     // cout << grid << endl;
-
+    //
     // cout << "path from northwest corner to southwest corner:" << endl;
     // const auto south_west = grid.cell_at(grid.rows() - 1, 0);
     // grid.distances = make_unique<Distances>(distances.path_to(*south_west));
@@ -43,7 +59,9 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-    grid.draw(50);
+    grid.draw(50, {picked_color, picked_intensity_stretch});
+
+    gui.draw();
 }
 
 //--------------------------------------------------------------
