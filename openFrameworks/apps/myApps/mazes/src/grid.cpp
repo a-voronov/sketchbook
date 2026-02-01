@@ -35,9 +35,8 @@ void Grid::prepare_grid() {
         grid_.emplace_back();
         auto& row = grid_.back();
         row.reserve(columns_);
-        for (int c = 0; c < columns_; ++c) {
+        for (int c = 0; c < columns_; ++c)
             row.emplace_back(make_unique<Cell>(r, c));
-        }
     }
 }
 
@@ -53,31 +52,43 @@ void Grid::configure_cells() {
     });
 }
 
-void Grid::draw(int cell_size) {
-    ofBackground(255, 255, 255, 255);
-    ofSetColor(0, 0, 0, 255);
+void Grid::draw(int cell_size, const ColorCfg& color_cfg) {
+    ofBackground(ofColor::white);
     ofSetLineWidth(4);
-    ofTranslate(
-        ofGetWidth() / 2 - (cell_size * columns_) / 2,
-        ofGetHeight() / 2 - (cell_size * rows_) / 2
-    );
 
-    for (int row = 0; row < rows_; ++row) {
-        for (int col = 0; col < columns_; ++col) {
-            const Cell* cell = cell_at(row, col);
+    ofPushMatrix();
+        ofTranslate(
+            ofGetWidth() / 2 - (cell_size * columns_) / 2,
+            ofGetHeight() / 2 - (cell_size * rows_) / 2
+        );
 
-            int x1 = col * cell_size;
-            int y1 = row * cell_size;
-            int x2 = (col + 1) * cell_size;
-            int y2 = (row + 1) * cell_size;
+        for (int mode = 0; mode < 2; ++mode) {
+            for (int row = 0; row < rows_; ++row) {
+                for (int col = 0; col < columns_; ++col) {
+                    const Cell* cell = cell_at(row, col);
 
-            if (cell->north == nullptr) ofDrawLine(x1, y1, x2, y1);
-            if (cell->west  == nullptr) ofDrawLine(x1, y1, x1, y2);
+                    int x1 = col * cell_size;
+                    int y1 = row * cell_size;
+                    int x2 = (col + 1) * cell_size;
+                    int y2 = (row + 1) * cell_size;
 
-            if (!cell->is_linked(cell->east))  ofDrawLine(x2, y1, x2, y2);
-            if (!cell->is_linked(cell->south)) ofDrawLine(x1, y2, x2, y2);
+                    if (mode == 0) {
+                        ofFill();
+                        ofSetColor(background_color_for(*cell, color_cfg));
+                        ofDrawRectangle(x1, y1, cell_size, cell_size);
+                    } else {
+                        ofNoFill();
+                        ofSetColor(ofColor::black);
+                        if (cell->north == nullptr) ofDrawLine(x1, y1, x2, y1);
+                        if (cell->west == nullptr) ofDrawLine(x1, y1, x1, y2);
+
+                        if (!cell->is_linked(cell->east)) ofDrawLine(x2, y1, x2, y2);
+                        if (!cell->is_linked(cell->south)) ofDrawLine(x1, y2, x2, y2);
+                    }
+                }
+            }
         }
-    }
+    ofPopMatrix();
 }
 
 string Grid::contents_of(const Cell& cell) const {

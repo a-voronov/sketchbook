@@ -7,8 +7,17 @@
 #include <ostream>
 
 #include "cell.h"
+#include "ofMain.h"
 
 using namespace std;
+
+struct ColorCfg {
+    const ofColor tone;
+    // 0...1
+    const float intensity_stretch;
+
+    ColorCfg(ofColor t = ofColor::white, float s = 0.75f) : tone(t), intensity_stretch(s) {};
+};
 
 struct Grid {
 public:
@@ -23,8 +32,9 @@ public:
     Cell* cell_at(int row, int column) const;
     Cell& random_cell(std::mt19937& rng) const;
 
-    void draw(int cell_size = 10);
+    void draw(int cell_size = 10, const ColorCfg& color_cfg = {});
     virtual string contents_of(const Cell& cell) const;
+    virtual ofColor background_color_for(const Cell& cell, const ColorCfg& color_cfg) const { return color_cfg.tone; }
 
 private:
     int rows_, columns_;

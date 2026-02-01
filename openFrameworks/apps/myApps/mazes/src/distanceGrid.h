@@ -1,17 +1,19 @@
 #pragma once
 
-#include "grid.h"
 #include "distances.h"
+#include "grid.h"
 #include "mazeUtils.h"
 
 using namespace std;
 
-struct DistanceGrid: Grid {
+struct DistanceGrid : Grid {
 public:
     unique_ptr<Distances> distances = nullptr;
 
-    DistanceGrid(int rows, int columns) : Grid(rows, columns) {}
-    DistanceGrid() : DistanceGrid(0, 0) {}
+    DistanceGrid(int rows, int columns)
+        : Grid(rows, columns) {}
+    DistanceGrid()
+        : DistanceGrid(0, 0) {}
 
     string contents_of(const Cell& cell) const override {
         if (distances) {

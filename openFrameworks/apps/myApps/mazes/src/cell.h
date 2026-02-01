@@ -39,7 +39,7 @@ public:
     Distances distances() const;
 
     bool operator==(const Cell& other) const {
-        return row_== other.row_ && column_ == other.column_;
+        return row_ == other.row_ && column_ == other.column_;
     }
 
 private:
