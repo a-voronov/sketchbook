@@ -116,3 +116,11 @@ choosing first arbitrary cell as the north-west corner:
 | f | e   d | g | f   g   h | i |               | p |       |   |           | 0 |
 +---+---+---+---+---+---+---+---+               +---+---+---+---+---+---+---+---+
 ```
+
+#### Color Grid
+
+Coloring grid cells based on their distance from the root cell. Closer cells are lighter, while further cells are darker. Here root cell is in the center of the grid.
+
+Additionally configuring the theme of the maze and how intense the colors should get. I've picked OKLab color space to implement intensity calculations since it has a whole dedicated **Lightness** component which makes it perfect for this task.
+
+![color grid](./openFrameworks/apps/myApps/mazes/bin/data/color-grid.png)
