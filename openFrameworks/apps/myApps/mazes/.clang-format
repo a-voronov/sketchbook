@@ -1,0 +1,136 @@
+# .clang-format style settings
+# https://clang.llvm.org/docs/ClangFormatStyleOptions.html
+#
+# Author: Oleksandr Voronov <github.com/a-voronov>
+
+Language: Cpp
+BasedOnStyle: Google
+Standard: c++17
+
+# Basic
+
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+
+ColumnLimit: 130
+
+DerivePointerAlignment: false
+PointerAlignment: Left
+QualifierAlignment: Left
+ReferenceAlignment: Left
+
+# Alignments
+
+AlignAfterOpenBracket: false
+
+AlignConsecutiveAssignments:
+  Enabled: true
+
+AlignConsecutiveBitFields:
+  Enabled: true
+
+AlignConsecutiveDeclarations:
+  Enabled: true
+
+AlignConsecutiveMacros:
+  Enabled: true
+
+AlignConsecutiveShortCaseStatements:
+  Enabled: true
+
+# Short Blocks on Single Line
+
+AllowShortBlocksOnASingleLine: Empty
+AllowShortIfStatementsOnASingleLine: WithoutElse
+AllowShortLoopsOnASingleLine: false
+
+# Breaks
+
+BreakAfterAttributes: Always
+BreakAfterOpenBracketBracedList: true
+BreakAfterOpenBracketFunction: true
+BreakAfterOpenBracketIf: true
+BreakAfterOpenBracketLoop: true
+BreakAfterOpenBracketSwitch: true
+BreakAfterReturnType: ExceptShortType
+
+BreakBeforeBraces: Attach
+BreakBeforeBinaryOperators: NonAssignment
+BreakBeforeCloseBracketBracedList: true
+BreakBeforeCloseBracketFunction: true
+BreakBeforeCloseBracketIf: true
+BreakBeforeCloseBracketLoop: true
+BreakBeforeCloseBracketSwitch: true
+BreakBeforeConceptDeclarations: Allowed
+BreakBeforeInlineASMColon: OnlyMultiline
+BreakBeforeTemplateCloser: true
+BreakConstructorInitializers: BeforeColon
+BreakInheritanceList: AfterColon
+BreakTemplateDeclarations: Yes
+
+CompactNamespaces: false
+Cpp11BracedListStyle: true
+  # BracedListStyle: Block
+
+EmptyLineAfterAccessModifier: Never
+EmptyLineBeforeAccessModifier: Always
+IncludeBlocksStyle: Regroup
+IndentAccessModifiers: false
+AccessModifierOffset: -4
+
+# Indentations
+
+IndentCaseBlocks: false
+IndentCaseLabels: false
+IndentExportBlock: true
+IndentExternBlock: true
+
+InsertNewlineAtEOF: true
+MaxEmptyLinesToKeep: 1
+KeepEmptyLines:
+  AtEndOfFile: true
+  AtStartOfBlock: false
+  AtStartOfFile: false
+
+LambdaBodyIndentation: Signature
+NamespaceIndentation: All
+
+# Numerics
+
+NumericLiteralCase:
+  ExponentLetter: Lower
+  HexDigit: Upper
+  Prefix: Lower
+  Suffix: Upper
+
+# Spaces
+
+SpaceAfterCStyleCast: false
+SpaceAfterLogicalNot: false
+SpaceAfterOperatorKeyword: false
+SpaceAfterTemplateKeyword: false
+
+SpaceBeforeAssignmentOperators: true
+SpaceBeforeCaseColon: false
+SpaceBeforeCpp11BracedList: false
+SpaceBeforeCtorInitializerColon: true
+SpaceBeforeInheritanceColon: true
+SpaceBeforeJsonColon: false
+SpaceBeforeParens: ControlStatements
+SpaceBeforeRangeBasedForLoopColon: true
+SpaceBeforeSquareBrackets: false
+
+SpacesBeforeTrailingComments: 1
+SpaceInEmptyBraces: Never
+SpacesInAngles: Never
+SpacesInContainerLiterals: false
+SpacesInSquareBrackets: false
+
+# Misc
+
+PackConstructorInitializers: NextLineOnly
+ReflowComments: Never
+RemoveEmptyLinesInUnwrappedLines: true
+VerilogBreakBetweenInstancePorts: false
+WrapNamespaceBodyWithEmptyLines: Leave
