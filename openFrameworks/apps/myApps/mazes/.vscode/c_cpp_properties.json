@@ -133,7 +133,10 @@
         "OF_LIBS_ROOT": "${OF_ROOT}/libs",
         "OF_ROOT": "${workspaceFolder}/../../..",
         "PROJECT_ADDON_INCLUDES": [],
-        "PROJECT_EXTRA_INCLUDES": []
+        "PROJECT_EXTRA_INCLUDES": [
+            "${workspaceRoot}/src",
+            "${workspaceRoot}/../../../addons/ofxGui/src"
+        ]
     },
     "version": 4
 }
