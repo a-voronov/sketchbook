@@ -13,14 +13,44 @@ void ofApp::setup(){
     gui.add(picked_color.set("color", ofColor::lightGreen, ofColor(0, 0, 0), ofColor(255 , 255, 255)));
     gui.add(picked_intensity_stretch.setup("intensity", 0.75f, 0.0f, 1.0f));
     gui.add(animation_speed.setup("animation speed", 4, 0, frame_rate));
+    // only affects mazes drawn on screen
+    gui.add(output_ascii.setup("ASCII", false));
 
     rng = std::mt19937{std::random_device{}()};
     // rng = std::mt19937{42};
+    generate_color_grid();
+}
+
+void ofApp::generate_regular_grid() {
+    auto distances = grid.cell_at(0, 0)->distances();
+    grid.set_distances(distances);
+    cout << grid << endl;
+
+    cout << "path from northwest corner to southwest corner:" << endl;
+    const auto south_west = grid.cell_at(grid.rows() - 1, 0);
+    grid.set_distances(distances.path_to(*south_west));
+    cout << grid << endl;
+}
+
+void ofApp::generate_distance_grid() {
+    auto start = grid.cell_at(0, 0);
+    auto distances = start->distances();
+    auto [new_start, _] = distances.max();
+
+    grid.set_distances(distances);
+    cout << grid << endl;
+
+    auto new_distances = new_start->distances();
+    auto [goal, _] = new_distances.max();
+
+    grid.set_distances(new_distances.path_to(*goal));
+    cout << grid << endl;
+}
+
+void ofApp::generate_color_grid() {
     grid = ColorGrid{56, 84};
     // BinaryTree::on(grid, rng);
     Sidewinder::on(grid, rng);
-
-    // MARK: ColoredGrid
 
     auto start = grid.cell_at(grid.rows() / 2, grid.columns() / 2);
     auto distances = start->distances();
@@ -29,33 +59,9 @@ void ofApp::setup(){
     distanced_cells.second = -1;
 
     grid.set_distances(distances);
-    cout << grid << endl;
 
-    // MARK: DistanceGrid
-
-    // auto start = grid.cell_at(0, 0);
-    // auto distances = start->distances();
-    // auto [new_start, _] = distances.max();
-    //
-    // grid.distances = make_unique<Distances>(distances);
-    // cout << grid << endl;
-    //
-    // auto new_distances = new_start->distances();
-    // auto [goal, _] = new_distances.max();
-    //
-    // grid.distances = make_unique<Distances>(new_distances.path_to(*goal));
-    // cout << grid << endl;
-
-    // MARK: Grid
-
-    // auto distances = grid.cell_at(0, 0)->distances();
-    // grid.distances = make_unique<Distances>(distances);
-    // cout << grid << endl;
-    //
-    // cout << "path from northwest corner to southwest corner:" << endl;
-    // const auto south_west = grid.cell_at(grid.rows() - 1, 0);
-    // grid.distances = make_unique<Distances>(distances.path_to(*south_west));
-    // cout << grid << endl;
+    if (output_ascii)
+        cout << grid << endl;
 }
 
 //--------------------------------------------------------------
@@ -107,8 +113,13 @@ void ofApp::exit(){
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-    if (key == 's') {
+    switch (key) {
+    case 's':
         ofSaveScreen("savedScreenshot_"+ofGetTimestampString()+".png");
+        break;
+    case 'r':
+        generate_color_grid();
+        break;
     }
 }
 
