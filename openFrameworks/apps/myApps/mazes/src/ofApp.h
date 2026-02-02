@@ -30,7 +30,10 @@ class ofApp : public ofBaseApp{
         std::mt19937 rng;
         ColorGrid grid;
 
+        pair<vector<vector<const Cell*>>, int> distanced_cells;
+
         ofxPanel gui;
         ofParameter<ofColor> picked_color;
         ofxFloatSlider picked_intensity_stretch;
+        ofxIntSlider animation_speed;
 };

@@ -52,43 +52,75 @@ void Grid::configure_cells() {
     });
 }
 
-void Grid::draw(int cell_size, const ColorCfg& color_cfg) {
-    ofBackground(ofColor::white);
-    ofSetLineWidth(4);
-
+void Grid::draw(const DrawCfg& draw_cfg) const {
     ofPushMatrix();
         ofTranslate(
-            ofGetWidth() / 2 - (cell_size * columns_) / 2,
-            ofGetHeight() / 2 - (cell_size * rows_) / 2
+            ofGetWidth() / 2 - (draw_cfg.cell_size * columns_) / 2,
+            ofGetHeight() / 2 - (draw_cfg.cell_size * rows_) / 2
         );
 
-        for (int mode = 0; mode < 2; ++mode) {
-            for (int row = 0; row < rows_; ++row) {
-                for (int col = 0; col < columns_; ++col) {
-                    const Cell* cell = cell_at(row, col);
+        for (int row = 0; row < rows_; ++row)
+            for (int col = 0; col < columns_; ++col)
+                draw_cell(*cell_at(row, col), draw_cfg);
 
-                    int x1 = col * cell_size;
-                    int y1 = row * cell_size;
-                    int x2 = (col + 1) * cell_size;
-                    int y2 = (row + 1) * cell_size;
+    ofPopMatrix();
+}
 
-                    if (mode == 0) {
-                        ofFill();
-                        ofSetColor(background_color_for(*cell, color_cfg));
-                        ofDrawRectangle(x1, y1, cell_size, cell_size);
-                    } else {
-                        ofNoFill();
-                        ofSetColor(ofColor::black);
-                        if (cell->north == nullptr) ofDrawLine(x1, y1, x2, y1);
-                        if (cell->west == nullptr) ofDrawLine(x1, y1, x1, y2);
+void Grid::draw_cells(vector<const Cell*> cells, const DrawCfg& draw_cfg) const {
+    ofPushMatrix();
+        ofTranslate(
+            ofGetWidth() / 2 - (draw_cfg.cell_size * columns_) / 2,
+            ofGetHeight() / 2 - (draw_cfg.cell_size * rows_) / 2
+        );
 
-                        if (!cell->is_linked(cell->east)) ofDrawLine(x2, y1, x2, y2);
-                        if (!cell->is_linked(cell->south)) ofDrawLine(x1, y2, x2, y2);
-                    }
-                }
-            }
+        for (auto cell : cells) {
+            draw_cell(*cell_at(cell->row(), cell->column()), draw_cfg);
         }
     ofPopMatrix();
+}
+
+void Grid::draw_cell(const Cell& cell, const DrawCfg& draw_cfg) const {
+    ofPoint p1{float(cell.column() * draw_cfg.cell_size), float(cell.row() * draw_cfg.cell_size)};
+    ofPoint p2{float((cell.column() + 1) * draw_cfg.cell_size), float((cell.row() + 1) * draw_cfg.cell_size)};
+
+    switch (draw_cfg.draw_mode) {
+    case DrawMode::Walls:
+        draw_walls(p1, p2, cell, draw_cfg);
+        break;
+    case DrawMode::BgColor:
+        draw_bg_color(p1, cell, draw_cfg);
+        break;
+    case DrawMode::All:
+        draw_walls(p1, p2, cell, draw_cfg);
+        draw_bg_color(p1, cell, draw_cfg);
+        break;
+    }
+}
+
+void Grid::draw_bg_color(ofPoint p1, const Cell& cell, const DrawCfg& draw_cfg) const {
+    ofFill();
+    ofSetColor(bg_color_for(cell, draw_cfg));
+
+    float wall_padding = float(draw_cfg.wall_width) / 2.0f;
+    float north{}, south{}, east{}, west{};
+
+    if (!cell.is_linked(cell.north)) north = wall_padding;
+    if (!cell.is_linked(cell.south)) south = wall_padding;
+    if (!cell.is_linked(cell.east))  east = wall_padding;
+    if (!cell.is_linked(cell.west))  west = wall_padding;
+
+    ofDrawRectangle(p1.x + west, p1.y + north, draw_cfg.cell_size - east - west, draw_cfg.cell_size - south - north);
+}
+
+void Grid::draw_walls(ofPoint p1, ofPoint p2, const Cell& cell, const DrawCfg& draw_cfg) const {
+    ofSetLineWidth(draw_cfg.wall_width);
+    ofNoFill();
+    ofSetColor(draw_cfg.wall);
+    if (cell.north == nullptr) ofDrawLine(p1.x, p1.y, p2.x, p1.y);
+    if (cell.west == nullptr) ofDrawLine(p1.x, p1.y, p1.x, p2.y);
+
+    if (!cell.is_linked(cell.east)) ofDrawLine(p2.x, p1.y, p2.x, p2.y);
+    if (!cell.is_linked(cell.south)) ofDrawLine(p1.x, p2.y, p2.x, p2.y);
 }
 
 string Grid::contents_of(const Cell& cell) const {

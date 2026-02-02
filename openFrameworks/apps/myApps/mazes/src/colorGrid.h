@@ -18,14 +18,14 @@ public:
         maximum_   = distances.max().second;
     }
 
-    ofColor background_color_for(const Cell& cell, const ColorCfg& color_cfg) const override {
+    ofColor bg_color_for(const Cell& cell, const DrawCfg& draw_cfg) const override {
         if (!distances_) return ofColor::white;
         int distance = distances_->get(cell);
         if (distance < 0) return ofColor::white;
 
         float intensity = 1.0f - ((maximum_ - distance) / maximum_);
 
-        return color_intensity(color_cfg.tone, intensity * std::clamp(color_cfg.intensity_stretch, 0.0f, 1.0f));
+        return color_intensity(draw_cfg.tone, intensity * std::clamp(draw_cfg.intensity_stretch, 0.0f, 1.0f));
     }
 
 private:

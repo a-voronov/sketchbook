@@ -19,6 +19,7 @@ public:
     // so the caller owns it and can do whatever they want with it
     Distances path_to(const Cell& goal) const;
     pair<const Cell*, int> max() const;
+    vector<vector<const Cell*>> distanced_cells() const;
 
 private:
     // keeping cells as const* because we don't need to mutate them here

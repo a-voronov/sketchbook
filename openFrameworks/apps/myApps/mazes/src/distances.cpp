@@ -54,3 +54,19 @@ pair<const Cell*, int> Distances::max() const {
     }
     return {max_cell, max_distance};
 }
+
+vector<vector<const Cell*>> Distances::distanced_cells() const {
+    vector<vector<const Cell*>> result;
+    result.push_back({});
+    int max_distance = 0;
+    for (auto& [cell, distance] : cells_) {
+        if (distance > max_distance) {
+            for (int d = 0; d < distance - max_distance; ++d) {
+                result.push_back({});
+            }
+            max_distance = distance;
+        }
+        result.at(distance).push_back(cell);
+    }
+    return result;
+}
