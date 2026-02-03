@@ -15,10 +15,11 @@ public:
 
     vector<const Cell*> cells() const;
 
-    // returning Distances as a value since it's a computed data which has no prior owner,
+    // returns Distances as a value since it's a computed data which has no prior owner,
     // so the caller owns it and can do whatever they want with it
     Distances path_to(const Cell& goal) const;
     pair<const Cell*, int> max() const;
+    // returns cell batches in the ascending order of their growing distances from the root cell
     vector<vector<const Cell*>> distanced_cells() const;
 
 private:

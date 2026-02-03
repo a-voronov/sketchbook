@@ -1,7 +1,7 @@
 #pragma once
 
-#include "distances.h"
 #include "grid.h"
+#include "distances.h"
 #include "mazeUtils.h"
 
 using namespace std;
@@ -27,6 +27,8 @@ public:
 
         return color_intensity(draw_cfg.tone, intensity * std::clamp(draw_cfg.intensity_stretch, 0.0f, 1.0f));
     }
+
+    void accept(GridVisitor& visitor, std::mt19937& rng) override { visitor.visit(*this, rng); }
 
 private:
     unique_ptr<Distances> distances_ = nullptr;

@@ -11,6 +11,8 @@
 
 using namespace std;
 
+struct GridVisitor;
+
 enum struct DrawMode {
     Walls, BgColor, All
 };
@@ -30,18 +32,22 @@ public:
     Grid(int rows, int columns);
     Grid() : Grid(0, 0) {};
 
+    virtual ~Grid() = default;
+
     int rows() const    { return rows_; }
     int columns() const { return columns_; }
     int size() const    { return rows_ * columns_; }
 
     void each_cell(const std::function<void(Cell&)>& lambda);
     Cell* cell_at(int row, int column) const;
-    Cell& random_cell(std::mt19937& rng) const;
+    Cell* random_cell(std::mt19937& rng) const;
 
     void draw(const DrawCfg& draw_cfg = {}) const;
-    void draw_cells(vector<const Cell*> cells, const DrawCfg& draw_cfg) const;
+    void draw_cells(const vector<const Cell*>& cells, const DrawCfg& draw_cfg) const;
     virtual string contents_of(const Cell& cell) const;
     virtual ofColor bg_color_for(const Cell& cell, const DrawCfg& draw_cfg) const { return draw_cfg.tone; }
+
+    virtual void accept(GridVisitor& visitor, std::mt19937& rng) = 0;
 
 private:
     int rows_, columns_;

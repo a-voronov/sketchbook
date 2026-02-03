@@ -20,10 +20,10 @@ Cell* Grid::cell_at(int row, int column) const {
     return grid_.at(row).at(column).get();
 }
 
-Cell& Grid::random_cell(std::mt19937& rng) const {
+Cell* Grid::random_cell(std::mt19937& rng) const {
     std::uniform_int_distribution<int> r_dist(0, rows_ - 1);
     std::uniform_int_distribution<int> c_dist(0, columns_ - 1);
-    return *grid_.at(r_dist(rng)).at(c_dist(rng));
+    return grid_.at(r_dist(rng)).at(c_dist(rng)).get();
 }
 
 void Grid::prepare_grid() {
@@ -66,16 +66,16 @@ void Grid::draw(const DrawCfg& draw_cfg) const {
     ofPopMatrix();
 }
 
-void Grid::draw_cells(vector<const Cell*> cells, const DrawCfg& draw_cfg) const {
+void Grid::draw_cells(const vector<const Cell*>& cells, const DrawCfg& draw_cfg) const {
     ofPushMatrix();
         ofTranslate(
             ofGetWidth() / 2 - (draw_cfg.cell_size * columns_) / 2,
             ofGetHeight() / 2 - (draw_cfg.cell_size * rows_) / 2
         );
 
-        for (auto cell : cells) {
+        for (auto cell : cells)
             draw_cell(*cell_at(cell->row(), cell->column()), draw_cfg);
-        }
+
     ofPopMatrix();
 }
 
