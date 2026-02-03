@@ -1,0 +1,3 @@
+[submodule "openFrameworks/addons/ofxDropdown"]
+	path = openFrameworks/addons/ofxDropdown
+	url = git@github.com:roymacdonald/ofxDropdown.git

@@ -135,7 +135,8 @@
         "PROJECT_ADDON_INCLUDES": [],
         "PROJECT_EXTRA_INCLUDES": [
             "${workspaceRoot}/src",
-            "${workspaceRoot}/../../../addons/ofxGui/src"
+            "${workspaceRoot}/../../../addons/ofxGui/src",
+            "${workspaceRoot}/../../../addons/ofxDropdown/src"
         ]
     },
     "version": 4

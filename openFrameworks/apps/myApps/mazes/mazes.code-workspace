@@ -8,6 +8,9 @@
 		},
 		{
 			"path": "${workspaceRoot}/../../../../addons/ofxGui"
+		},
+		{
+			"path": "${workspaceRoot}/../../../../addons/ofxDropdown"
 		}
 	],
 	"openFrameworksProjectGeneratorVersion": "0.103.0",
