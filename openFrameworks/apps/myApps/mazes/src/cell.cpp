@@ -28,14 +28,16 @@ bool Cell::is_linked(const Cell* other) const {
     return find(links_.begin(), links_.end(), other) != links_.end();
 }
 
-vector<const Cell*> Cell::neighbors() const {
-    vector<const Cell*> result;
-    result.reserve(4);
-    if (north != nullptr) result.push_back(north);
-    if (south != nullptr) result.push_back(south);
-    if (east  != nullptr) result.push_back(east);
-    if (west  != nullptr) result.push_back(west);
-    return result;
+Cell* Cell::random_neighbor(std::mt19937& rng) const {
+    vector<Cell*> neighbors;
+    neighbors.reserve(4);
+    if (north != nullptr) neighbors.push_back(north);
+    if (south != nullptr) neighbors.push_back(south);
+    if (east  != nullptr) neighbors.push_back(east);
+    if (west  != nullptr) neighbors.push_back(west);
+
+    std::uniform_int_distribution<int> n_dist(0, neighbors.size() - 1);
+    return neighbors.at(n_dist(rng));
 }
 
 Distances Cell::distances() const {
