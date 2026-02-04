@@ -48,6 +48,7 @@ public:
     ofxFloatSlider picked_intensity_stretch;
     ofxIntSlider animation_speed;
     ofxToggle output_ascii;
+    ofxToggle repeat;
 
     ofParameter<string> selected_algorithm;
     unique_ptr<ofxDropdown> algorithms_dropdown;

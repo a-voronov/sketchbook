@@ -8,6 +8,9 @@
 #include "sidewinder.h"
 #include "aldousBroder.h"
 #include "wilsons.h"
+#include "huntAndKill.h"
+
+// TODO: think of introducing a notion of show/demo, since we can have multiple demos with the same grid
 
 const static int frame_rate = 60;
 
@@ -21,6 +24,7 @@ const static vector<pair<string, AlgorithmCtor>> all_algorithms{
     {"Sidewinder",   [](Grid& g, std::mt19937& rng) { Sidewinder::on(g, rng); }},
     {"AldousBroder", [](Grid& g, std::mt19937& rng) { AldousBroder::on(g, rng); }},
     {"Wilsons",      [](Grid& g, std::mt19937& rng) { Wilsons::on(g, rng); }},
+    {"HuntAndKill",  [](Grid& g, std::mt19937& rng) { HuntAndKill::on(g, rng); }},
 };
 
 //--------------------------------------------------------------
@@ -39,6 +43,7 @@ void ofApp::setup(){
     gui.add(animation_speed.setup("animation speed", 4, 0, frame_rate));
     // only affects mazes drawn on screen
     gui.add(output_ascii.setup("ASCII", false));
+    gui.add(repeat.setup("repeat", true));
 
     selected_algorithm.setName("algorithm");
     algorithms_dropdown = make_unique<ofxDropdown>(selected_algorithm);
@@ -127,7 +132,7 @@ void ofApp::visit(DistanceGrid& grid, std::mt19937& rng) {
     auto [goal, _] = new_distances.max();
     auto path = new_distances.path_to(*goal);
 
-    distanced_cells = {path.distanced_cells(), -1};
+    distanced_cells = {path.distanced_cells(), 0};
     grid.set_distances(path);
 
     if (output_ascii)
@@ -141,8 +146,7 @@ void ofApp::visit(ColorGrid& grid, std::mt19937& rng) {
     auto start = grid.cell_at(grid.rows() / 2, grid.columns() / 2);
     auto distances = start->distances();
 
-    // setting -1 as initial index, so we can increment it to 0 in the update method
-    distanced_cells = {distances.distanced_cells(), -1};
+    distanced_cells = {distances.distanced_cells(), 0};
 
     grid.set_distances(distances);
 
@@ -161,9 +165,9 @@ void ofApp::update(){
 
     int update_speed = int(frame_rate / animation_speed);
     if (ofGetFrameNum() % update_speed == 0) {
-        if (distanced_cells.second < distanced_cells.first.size() - 1) {
+        if (distanced_cells.second < distanced_cells.first.size()) {
             ++distanced_cells.second;
-        } else {
+        } else if (repeat) {
             distanced_cells.second = 0;
         }
     }
