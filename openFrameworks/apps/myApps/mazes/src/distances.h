@@ -22,6 +22,8 @@ public:
     // returns cell batches in the ascending order of their growing distances from the root cell
     vector<vector<const Cell*>> distanced_cells() const;
 
+    const Cell& get_root() const { return *root_; }
+
 private:
     // keeping cells as const* because we don't need to mutate them here
     const Cell* root_;
