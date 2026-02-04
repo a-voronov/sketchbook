@@ -10,7 +10,8 @@
 #include "grid.h"
 #include "gridVisitor.h"
 
-using Algorithm = std::function<void(Grid&, std::mt19937&)>;
+using AlgorithmCtor = std::function<void(Grid&, std::mt19937&)>;
+using GridCtor = std::function<unique_ptr<Grid>(int r, int c)>;
 
 class ofApp : public ofBaseApp, public GridVisitor {
 public:
@@ -51,11 +52,19 @@ public:
     ofParameter<string> selected_algorithm;
     unique_ptr<ofxDropdown> algorithms_dropdown;
 
+    ofParameter<string> selected_grid;
+    unique_ptr<ofxDropdown> grids_dropdown;
+
     ofEventListeners listeners;
 
 private:
-    void generate_distance_grid();
-    void generate_color_grid();
+    // ofxDropdown allows deselection, and we can end up in an empty state,
+    // so these backup values help us to restore previously selected state
+    string selected_algorithm_;
+    string selected_grid_;
 
-    const Algorithm& get_selected_algorithm() const;
+    void generate_grid();
+
+    const AlgorithmCtor& get_selected_algorithm() const;
+    const GridCtor& get_selected_grid() const;
 };
