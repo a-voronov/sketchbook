@@ -31,6 +31,8 @@ public:
     // returning const& since this method serves as a read-only-view of underlying links_ member property,
     // so we don't make a copy and don't allow mutation of it
     const vector<const Cell*>& links() const { return links_; }
+
+    vector<Cell*> neighbors() const;
     Cell* random_neighbor(std::mt19937& rng) const;
 
     // returning Distances as a value since it's a computed data which has no prior owner,
