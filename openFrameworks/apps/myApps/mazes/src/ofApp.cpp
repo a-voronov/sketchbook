@@ -9,6 +9,7 @@
 #include "aldousBroder.h"
 #include "wilsons.h"
 #include "huntAndKill.h"
+#include "recursiveBacktracker.h"
 
 // TODO: think of introducing a notion of show/demo, since we can have multiple demos with the same grid
 
@@ -20,11 +21,12 @@ const static vector<pair<string, GridCtor>> all_grids{
 };
 
 const static vector<pair<string, AlgorithmCtor>> all_algorithms{
-    {"BinaryTree",   [](Grid& g, std::mt19937& rng) { BinaryTree::on(g, rng); }},
-    {"Sidewinder",   [](Grid& g, std::mt19937& rng) { Sidewinder::on(g, rng); }},
-    {"AldousBroder", [](Grid& g, std::mt19937& rng) { AldousBroder::on(g, rng); }},
-    {"Wilsons",      [](Grid& g, std::mt19937& rng) { Wilsons::on(g, rng); }},
-    {"HuntAndKill",  [](Grid& g, std::mt19937& rng) { HuntAndKill::on(g, rng); }},
+    {"BinaryTree",           [](Grid& g, std::mt19937& rng) { BinaryTree::on(g, rng); }},
+    {"Sidewinder",           [](Grid& g, std::mt19937& rng) { Sidewinder::on(g, rng); }},
+    {"AldousBroder",         [](Grid& g, std::mt19937& rng) { AldousBroder::on(g, rng); }},
+    {"Wilsons",              [](Grid& g, std::mt19937& rng) { Wilsons::on(g, rng); }},
+    {"HuntAndKill",          [](Grid& g, std::mt19937& rng) { HuntAndKill::on(g, rng); }},
+    {"RecursiveBacktracker", [](Grid& g, std::mt19937& rng) { RecursiveBacktracker::on(g, rng); }},
 };
 
 //--------------------------------------------------------------

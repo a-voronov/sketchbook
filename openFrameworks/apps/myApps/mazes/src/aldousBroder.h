@@ -1,8 +1,6 @@
 #pragma once
 
-#include <random>
-
-struct Grid;
+#include "grid.h"
 
 struct AldousBroder {
     static void on(Grid& grid, std::mt19937& rng) {
