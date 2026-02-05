@@ -38,12 +38,15 @@ void ofApp::setup(){
     gui.setup();
     gui.add(rows.setup("rows", 56, 2, 100));
     gui.add(columns.setup("columns", 84, 2, 100));
-    gui.add(picked_color.set("color", ofColor::lightGreen, ofColor(0, 0, 0), ofColor(255 , 255, 255)));
+    gui.add(tone_color.set("tone color", ofColor::lightGreen, ofColor(0, 0, 0), ofColor(255 , 255, 255)));
     gui.add(picked_intensity_stretch.setup("intensity", 0.75f, 0.0f, 1.0f));
     gui.add(animation_speed.setup("animation speed", 4, 0, frame_rate));
     // only affects mazes drawn on screen
     gui.add(output_ascii.setup("ASCII", false));
     gui.add(repeat.setup("repeat", true));
+
+    gui.add(show_deadends.setup("deadends", false));
+    gui.add(deadends_color.set("deadends color", ofColor::silver, ofColor(0, 0, 0), ofColor(255 , 255, 255)));
 
     selected_algorithm.setName("algorithm");
     algorithms_dropdown = make_unique<ofxDropdown>(selected_algorithm);
@@ -88,10 +91,15 @@ void ofApp::setup(){
 
 //--------------------------------------------------------------
 void ofApp::generate_grid() {
+    distanced_cells = {};
+    deadends = {};
+
     auto& grid_ctor = get_selected_grid();
     auto new_grid = grid_ctor(rows, columns);
     grid = std::move(new_grid);
     grid.get()->accept(*this, rng);
+
+    deadends = grid->deadends();
 }
 
 const AlgorithmCtor& ofApp::get_selected_algorithm() const {
@@ -180,7 +188,7 @@ void ofApp::update(){
 void ofApp::draw(){
     ofBackground(ofColor::white);
     DrawCfg draw_cfg{
-        .tone = picked_color,
+        .tone = tone_color,
         .intensity_stretch = picked_intensity_stretch,
         .cell_size = 25,
         .wall_width = 2
@@ -200,6 +208,13 @@ void ofApp::draw(){
             grid->draw_cells(cells.at(i), cells_cfg);
     }
 
+    if (show_deadends) {
+        auto deadends_cfg = draw_cfg;
+        deadends_cfg.draw_mode = DrawMode::BgColor;
+        deadends_cfg.tone = deadends_color;
+        grid->draw_cells(deadends, deadends_cfg);
+    }
+
     gui.draw();
 }
 
@@ -215,7 +230,6 @@ void ofApp::keyPressed(int key){
         ofSaveScreen("savedScreenshot_"+ofGetTimestampString()+".png");
         break;
     case 'r':
-        // generate_color_grid();
         generate_grid();
         break;
     }

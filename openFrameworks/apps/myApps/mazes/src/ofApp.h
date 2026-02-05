@@ -35,20 +35,24 @@ public:
 
     std::mt19937 rng;
     unique_ptr<Grid> grid;
+    // a pair of distanced cells batches and an index of currently drawn batch
+    pair<vector<vector<const Cell*>>, int> distanced_cells;
+    vector<const Cell*> deadends;
 
     void visit(DistanceGrid&, std::mt19937& rng) override;
     void visit(ColorGrid&, std::mt19937& rng) override;
-    // a pair of distanced cells batches and an index of currently drawn batch
-    pair<vector<vector<const Cell*>>, int> distanced_cells;
 
     ofxPanel gui;
     ofxIntSlider rows;
     ofxIntSlider columns;
-    ofParameter<ofColor> picked_color;
+    ofParameter<ofColor> tone_color;
     ofxFloatSlider picked_intensity_stretch;
     ofxIntSlider animation_speed;
     ofxToggle output_ascii;
     ofxToggle repeat;
+
+    ofxToggle show_deadends;
+    ofParameter<ofColor> deadends_color;
 
     ofParameter<string> selected_algorithm;
     unique_ptr<ofxDropdown> algorithms_dropdown;

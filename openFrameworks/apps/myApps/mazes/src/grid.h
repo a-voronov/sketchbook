@@ -41,6 +41,7 @@ public:
     void each_cell(const std::function<void(Cell&)>& lambda);
     Cell* cell_at(int row, int column) const;
     Cell* random_cell(std::mt19937& rng) const;
+    vector<const Cell*> deadends() const;
 
     void draw(const DrawCfg& draw_cfg = {}) const;
     void draw_cells(const vector<const Cell*>& cells, const DrawCfg& draw_cfg) const;

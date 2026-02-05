@@ -8,24 +8,6 @@ Grid::Grid(int rows, int columns)
         configure_cells();
     }
 
-void Grid::each_cell(const std::function<void(Cell&)>& lambda) {
-    for (auto& row : grid_)
-        for (auto& cell : row)
-            lambda(*cell);
-}
-
-Cell* Grid::cell_at(int row, int column) const {
-    if (row >= grid_.size()) return nullptr;
-    if (column >= grid_.at(row).size()) return nullptr;
-    return grid_.at(row).at(column).get();
-}
-
-Cell* Grid::random_cell(std::mt19937& rng) const {
-    std::uniform_int_distribution<int> r_dist(0, rows_ - 1);
-    std::uniform_int_distribution<int> c_dist(0, columns_ - 1);
-    return grid_.at(r_dist(rng)).at(c_dist(rng)).get();
-}
-
 void Grid::prepare_grid() {
     grid_.clear();
     grid_.reserve(rows_);
@@ -50,6 +32,34 @@ void Grid::configure_cells() {
         cell.west  = cell_at(row, column - 1);
         cell.east  = cell_at(row, column + 1);
     });
+}
+
+void Grid::each_cell(const std::function<void(Cell&)>& lambda) {
+    for (auto& row : grid_)
+        for (auto& cell : row)
+            lambda(*cell);
+}
+
+Cell* Grid::cell_at(int row, int column) const {
+    if (row >= grid_.size()) return nullptr;
+    if (column >= grid_.at(row).size()) return nullptr;
+    return grid_.at(row).at(column).get();
+}
+
+Cell* Grid::random_cell(std::mt19937& rng) const {
+    std::uniform_int_distribution<int> r_dist(0, rows_ - 1);
+    std::uniform_int_distribution<int> c_dist(0, columns_ - 1);
+    return grid_.at(r_dist(rng)).at(c_dist(rng)).get();
+}
+
+vector<const Cell*> Grid::deadends() const {
+    vector<const Cell*> result;
+    for (auto& row : grid_)
+        for (auto& cell : row)
+            if (cell.get()->links().size() == 1)
+                result.push_back(cell.get());
+
+    return result;
 }
 
 void Grid::draw(const DrawCfg& draw_cfg) const {
@@ -153,3 +163,14 @@ std::ostream& operator<<(std::ostream& os, const Grid& grid) {
     }
     return os;
 }
+
+
+//   def deadends
+//     list = []
+
+//     each_cell do |cell|
+//       list << cell if cell.links.count == 1
+//     end
+
+//     list
+//   end
