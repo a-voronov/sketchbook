@@ -123,4 +123,12 @@ Coloring grid cells based on their distance from the root cell. Closer cells are
 
 Additionally configuring the theme of the maze and how intense the colors should get. I've picked OKLab color space to implement intensity calculations since it has a whole dedicated **Lightness** component which makes it perfect for this task.
 
+#### Animating Mazes
+
+After implementing various algorithms, i.e. random-walking ones to avoid bias like Aldous-Broder and Wilsons,
+it becomes quite interesting to see how these algorithms behave in comparison to each other.
+
+To make it easier to compare I've added a bunch of GUI controls to switch between different algorithms, pick colors and control their behavior.
+And I've added two modes - one creates a longest path in a maze and animates it from start to finish, another mode spreads colors step by step as we go deeper into the maze from the root (center in the examples).
+
 ![color grid](./openFrameworks/apps/myApps/mazes/bin/data/color-grid.png)
