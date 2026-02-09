@@ -2,7 +2,9 @@
 
 #include "distanceGrid.h"
 #include "colorGrid.h"
+#include "maskedGrid.h"
 #include "gridVisitor.h"
+#include "fileDialog.hh"
 
 #include "binaryTree.h"
 #include "sidewinder.h"
@@ -15,10 +17,7 @@
 
 const static int frame_rate = 60;
 
-const static vector<pair<string, GridCtor>> all_grids{
-    {"DistanceGrid", [](int r, int c) { return make_unique<DistanceGrid>(r, c); }},
-    {"ColorGrid",    [](int r, int c) { return make_unique<ColorGrid>(r, c); }}
-};
+static vector<pair<string, GridCtor>> all_grids;
 
 const static vector<pair<string, AlgorithmCtor>> all_algorithms{
     {"BinaryTree",           [](Grid& g, std::mt19937& rng) { BinaryTree::on(g, rng); }},
@@ -37,6 +36,37 @@ void ofApp::setup(){
     rng = std::mt19937{std::random_device{}()};
     // rng = std::mt19937{42};
 
+    all_grids = {
+        {"DistanceGrid", [this]() {
+            return make_unique<DistanceGrid>(rows, columns);
+        }},
+        {"ColorGrid", [this]() {
+            return make_unique<ColorGrid>(rows, columns);
+        }},
+        {"MaskedGrid", [this]() {
+            if (mask_path_.empty())
+                pick_mask();
+            auto mask = Mask::from_txt(mask_path_);
+            rows = mask->rows();
+            columns = mask->columns();
+            return make_unique<MaskedGrid>(std::move(mask));
+        }}
+    };
+
+
+    auto g = make_unique<MaskedGrid>(Mask::from_txt(
+        "/Users/alex/Projects/personal/sketchbook/openFrameworks/apps/myApps/mazes/bin/data/mask.txt"
+    ));
+    auto& ng = *g.get();
+    RecursiveBacktracker::on(ng, rng);
+    cout << ng << endl;
+
+
+
+
+
+
+
     gui.setup();
     gui.add(rows.setup("rows", 56, 2, 100));
     gui.add(columns.setup("columns", 84, 2, 100));
@@ -46,6 +76,8 @@ void ofApp::setup(){
     // only affects mazes drawn on screen
     gui.add(output_ascii.setup("ASCII", false));
     gui.add(repeat.setup("repeat", true));
+    gui.add(mask_picker.setup("pick mask", 200, 18));
+    mask_picker.addListener(this, &ofApp::pick_mask);
 
     gui.add(show_deadends.setup("deadends", false));
     gui.add(deadends_color.set("deadends color", ofColor::silver, ofColor(0, 0, 0), ofColor(255 , 255, 255)));
@@ -66,14 +98,14 @@ void ofApp::setup(){
     for (auto kv : all_grids)
         grids_dropdown->add(kv.first);
 
-    selected_algorithm_ = selected_algorithm = all_algorithms.at(1).first;
+    selected_algorithm_ = selected_algorithm = all_algorithms.at(5).first;
     selected_grid_ = selected_grid = all_grids.at(1).first;
     listeners.push(selected_algorithm.newListener([&](const ofParameter<string>& p){
         // ofxDropdown allows deselection
         // and reverting ofOption inside of the listener lambda doesn't trigger UI redraw no matter what,
         // hence we rely on backup local values to restore previously selected value inside `update` method
         if (p.get() == "") {
-            algorithms_dropdown.get()->hideDropdown();
+            algorithms_dropdown->hideDropdown();
             return;
         }
         selected_algorithm_ = p.get();
@@ -81,7 +113,7 @@ void ofApp::setup(){
     }));
     listeners.push(selected_grid.newListener([&](const ofParameter<string>& p){
         if (p.get() == "") {
-            grids_dropdown.get()->hideDropdown();
+            grids_dropdown->hideDropdown();
             return;
         }
         selected_grid_ = p.get();
@@ -97,9 +129,9 @@ void ofApp::generate_grid() {
     deadends = {};
 
     auto& grid_ctor = get_selected_grid();
-    auto new_grid = grid_ctor(rows, columns);
+    auto new_grid = grid_ctor();
     grid = std::move(new_grid);
-    grid.get()->accept(*this, rng);
+    grid->accept(*this, rng);
 
     deadends = grid->deadends();
 }
@@ -122,6 +154,10 @@ const GridCtor& ofApp::get_selected_grid() const {
         throw runtime_error("Unsupported grid type: " + selected_grid.get());
 
     return grid_type->second;
+}
+
+void ofApp::pick_mask() {
+    mask_path_ = pick_file(filesystem::current_path().string() + "/../../../", {"txt", "png"});
 }
 
 //--------------------------------------------------------------
@@ -164,6 +200,22 @@ void ofApp::visit(ColorGrid& grid, std::mt19937& rng) {
         cout << grid << endl;
 }
 
+void ofApp::visit(MaskedGrid& grid, std::mt19937& rng) {
+    auto& algorithm = get_selected_algorithm();
+    algorithm(grid, rng);
+
+    // auto start = grid.cell_at(grid.rows() / 2, grid.columns() / 2);
+    // auto distances = start->distances();
+
+    // distanced_cells = {distances.distanced_cells(), 0};
+    distanced_cells = {{}, 0};
+
+    // grid.set_distances(distances);
+
+    if (output_ascii)
+        cout << grid << endl;
+}
+
 //--------------------------------------------------------------
 void ofApp::update(){
     if (selected_grid.get() == "") {
@@ -173,12 +225,14 @@ void ofApp::update(){
         selected_algorithm = selected_algorithm_;
     }
 
-    int update_speed = int(frame_rate / animation_speed);
-    if (ofGetFrameNum() % update_speed == 0) {
-        if (distanced_cells.second < distanced_cells.first.size()) {
-            ++distanced_cells.second;
-        } else if (repeat) {
-            distanced_cells.second = 0;
+    if (!distanced_cells.first.empty()) {
+        int update_speed = int(frame_rate / animation_speed);
+        if (ofGetFrameNum() % update_speed == 0) {
+            if (distanced_cells.second < distanced_cells.first.size()) {
+                ++distanced_cells.second;
+            } else if (repeat) {
+                distanced_cells.second = 0;
+            }
         }
     }
     if (animation_speed == 0) {
@@ -203,11 +257,13 @@ void ofApp::draw(){
         grid_cfg.draw_mode = DrawMode::Walls;
         grid->draw(grid_cfg);
 
-        auto cells_cfg = draw_cfg;
-        cells_cfg.draw_mode = DrawMode::BgColor;
-        auto [cells, cells_batch] = distanced_cells;
-        for (int i = 0; i < cells_batch; ++i)
-            grid->draw_cells(cells.at(i), cells_cfg);
+        if (!distanced_cells.first.empty()) {
+            auto cells_cfg = draw_cfg;
+            cells_cfg.draw_mode = DrawMode::BgColor;
+            auto [cells, cells_batch] = distanced_cells;
+            for (int i = 0; i < cells_batch; ++i)
+                grid->draw_cells(cells.at(i), cells_cfg);
+        }
     }
 
     if (show_deadends) {

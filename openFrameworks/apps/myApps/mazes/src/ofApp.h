@@ -11,7 +11,7 @@
 #include "gridVisitor.h"
 
 using AlgorithmCtor = std::function<void(Grid&, std::mt19937&)>;
-using GridCtor = std::function<unique_ptr<Grid>(int r, int c)>;
+using GridCtor = std::function<unique_ptr<Grid>()>;
 
 class ofApp : public ofBaseApp, public GridVisitor {
 public:
@@ -41,6 +41,7 @@ public:
 
     void visit(DistanceGrid&, std::mt19937& rng) override;
     void visit(ColorGrid&, std::mt19937& rng) override;
+    void visit(MaskedGrid&, std::mt19937& rng) override;
 
     ofxPanel gui;
     ofxIntSlider rows;
@@ -50,6 +51,7 @@ public:
     ofxIntSlider animation_speed;
     ofxToggle output_ascii;
     ofxToggle repeat;
+    ofxButton mask_picker;
 
     ofxToggle show_deadends;
     ofParameter<ofColor> deadends_color;
@@ -67,8 +69,10 @@ private:
     // so these backup values help us to restore previously selected state
     string selected_algorithm_;
     string selected_grid_;
+    string mask_path_;
 
     void generate_grid();
+    void pick_mask();
 
     const AlgorithmCtor& get_selected_algorithm() const;
     const GridCtor& get_selected_grid() const;

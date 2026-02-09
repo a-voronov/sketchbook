@@ -32,7 +32,7 @@ public:
         if (!max_ || !distances_)
             return ofColor::white;
 
-        if (cell == distances_.get()->get_root()) {
+        if (cell == distances_->root()) {
             return ofColor::blue;
         } else if (cell == *max_) {
             return ofColor::red;

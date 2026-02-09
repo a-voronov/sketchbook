@@ -7,11 +7,10 @@
 #include <ostream>
 
 #include "cell.h"
+#include "gridVisitor.h"
 #include "ofMain.h"
 
 using namespace std;
-
-struct GridVisitor;
 
 enum struct DrawMode {
     Walls, BgColor, All
@@ -40,7 +39,7 @@ public:
 
     void each_cell(const std::function<void(Cell&)>& lambda);
     Cell* cell_at(int row, int column) const;
-    Cell* random_cell(std::mt19937& rng) const;
+    virtual Cell* random_cell(std::mt19937& rng) const;
     vector<const Cell*> deadends() const;
 
     void draw(const DrawCfg& draw_cfg = {}) const;
@@ -50,15 +49,16 @@ public:
 
     virtual void accept(GridVisitor& visitor, std::mt19937& rng) = 0;
 
-private:
+protected:
     int rows_, columns_;
     // Grid owns cells, so we store them as unique_ptr
     // and pass around raw pointers for temporary access to the cells
     vector<vector<unique_ptr<Cell>>> grid_;
 
-    void prepare_grid();
+    virtual void prepare_grid();
     void configure_cells();
 
+private:
     void draw_cell(const Cell& cell, const DrawCfg& draw_cfg) const;
     void draw_bg_color(ofPoint p1, const Cell& cell, const DrawCfg& draw_cfg) const;
     void draw_walls(ofPoint p1, ofPoint p2, const Cell& cell, const DrawCfg& draw_cfg) const;

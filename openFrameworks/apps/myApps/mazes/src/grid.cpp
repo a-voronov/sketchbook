@@ -41,22 +41,24 @@ void Grid::each_cell(const std::function<void(Cell&)>& lambda) {
 }
 
 Cell* Grid::cell_at(int row, int column) const {
-    if (row >= grid_.size()) return nullptr;
-    if (column >= grid_.at(row).size()) return nullptr;
-    return grid_.at(row).at(column).get();
+    if (row < 0 || row >= grid_.size()) return nullptr;
+    if (column < 0 || column >= grid_.at(row).size()) return nullptr;
+    auto cell = grid_.at(row).at(column).get();
+    if (cell->row() == -1 || cell->column() == -1) return nullptr;
+    return cell;
 }
 
 Cell* Grid::random_cell(std::mt19937& rng) const {
     std::uniform_int_distribution<int> r_dist(0, rows_ - 1);
     std::uniform_int_distribution<int> c_dist(0, columns_ - 1);
-    return grid_.at(r_dist(rng)).at(c_dist(rng)).get();
+    return cell_at(r_dist(rng), c_dist(rng));
 }
 
 vector<const Cell*> Grid::deadends() const {
     vector<const Cell*> result;
     for (auto& row : grid_)
         for (auto& cell : row)
-            if (cell.get()->links().size() == 1)
+            if (cell->links().size() == 1)
                 result.push_back(cell.get());
 
     return result;
@@ -71,7 +73,8 @@ void Grid::draw(const DrawCfg& draw_cfg) const {
 
         for (int row = 0; row < rows_; ++row)
             for (int col = 0; col < columns_; ++col)
-                draw_cell(*cell_at(row, col), draw_cfg);
+                if (auto cell = cell_at(row, col))
+                    draw_cell(*cell, draw_cfg);
 
     ofPopMatrix();
 }
@@ -84,7 +87,8 @@ void Grid::draw_cells(const vector<const Cell*>& cells, const DrawCfg& draw_cfg)
         );
 
         for (auto cell : cells)
-            draw_cell(*cell_at(cell->row(), cell->column()), draw_cfg);
+            if (auto grid_cell = cell_at(cell->row(), cell->column()))
+                draw_cell(*grid_cell, draw_cfg);
 
     ofPopMatrix();
 }
@@ -142,13 +146,14 @@ std::ostream& operator<<(std::ostream& os, const Grid& grid) {
     os << "+" << repeat("---+", grid.columns()) << "\n";
 
     const string corner = "+";
+    const Cell empty_cell{-1, -1};
 
     for (int row = 0; row < grid.rows(); ++row) {
         string top = "|";
         string bottom = "+";
 
         for (int col = 0; col < grid.columns(); ++col) {
-            const Cell* cell = grid.cell_at(row, col);
+            const Cell* cell = grid.cell_at(row, col) ?: &empty_cell;
             const string body = " " + grid.contents_of(*cell) + " ";
 
             const string east_boundary = cell->is_linked(cell->east) ? " " : "|";
@@ -163,14 +168,3 @@ std::ostream& operator<<(std::ostream& os, const Grid& grid) {
     }
     return os;
 }
-
-
-//   def deadends
-//     list = []
-
-//     each_cell do |cell|
-//       list << cell if cell.links.count == 1
-//     end
-
-//     list
-//   end
