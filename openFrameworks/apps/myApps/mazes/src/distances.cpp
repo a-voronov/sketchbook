@@ -6,9 +6,9 @@ Distances::Distances(const Cell& root)
     }
 
 int Distances::get(const Cell& cell) const {
-    if (cells_.count(&cell) == 0) {
+    if (cells_.count(&cell) == 0)
         return -1;
-    }
+
     return cells_.at(&cell);
 }
 
@@ -19,8 +19,10 @@ void Distances::set(const Cell& cell, int distance) {
 vector<const Cell*> Distances::cells() const {
     vector<const Cell*> result{};
     result.reserve(cells_.size());
+
     for (auto& kv : cells_)
         result.push_back(kv.first);
+
     return result;
 }
 

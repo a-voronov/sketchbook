@@ -29,7 +29,7 @@ public:
                 if (mask_->bit_at(r, c)) {
                     row.emplace_back(make_unique<Cell>(r, c));
                 } else {
-                    row.emplace_back(make_unique<Cell>(-1, -1));
+                    row.emplace_back(nullptr);
                 }
             }
         }
@@ -40,7 +40,7 @@ public:
         return cell_at(r, c);
     }
 
-    int size() {
+    int size() const override {
         return mask_->count();
     }
 

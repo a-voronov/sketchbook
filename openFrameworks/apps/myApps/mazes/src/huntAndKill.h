@@ -7,29 +7,33 @@ struct HuntAndKill {
         auto current = grid.random_cell(rng);
 
         while (current) {
-            auto cell_neighbors = current->neighbors();
+            auto current_neighbors = current->neighbors();
             vector<Cell*> unvisited_neighbors;
-            copy_if(cell_neighbors.begin(), cell_neighbors.end(), back_inserter(unvisited_neighbors), ([](auto& n) {
+            copy_if(current_neighbors.begin(), current_neighbors.end(), back_inserter(unvisited_neighbors), ([](auto& n) {
                 return n->links().empty();
             }));
 
             if (unvisited_neighbors.empty()) {
                 current = nullptr;
 
-                for (int i = 0; i < grid.size(); ++i) {
+                // we're using a single loop to control it through break and continue statements,
+                // and here grid.size() for masked grid will be not what we're looking for, so we calculate it for each cell
+                int grid_size = grid.rows() * grid.columns();
+                for (int i = 0; i < grid_size; ++i) {
                     int r = i / grid.columns();
                     int c = i % grid.columns();
-                    auto& cell = *grid.cell_at(r, c);
+                    auto cell = grid.cell_at(r, c);
+                    if (!cell) continue;
 
-                    auto cell_neighbors = cell.neighbors();
+                    auto cell_neighbors = cell->neighbors();
                     vector<Cell*> visited_neighbors;
                     copy_if(cell_neighbors.begin(), cell_neighbors.end(), back_inserter(visited_neighbors), ([](auto& n) {
                         return !n->links().empty();
                     }));
 
-                    if (cell.links().empty() && !visited_neighbors.empty()) {
+                    if (cell->links().empty() && !visited_neighbors.empty()) {
                         std::uniform_int_distribution<int> vn_dist(0, visited_neighbors.size() - 1);
-                        current = &cell;
+                        current = cell;
                         auto neighbor = visited_neighbors.at(vn_dist(rng));
                         current->link(neighbor);
 

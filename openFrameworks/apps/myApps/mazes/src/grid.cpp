@@ -37,28 +37,30 @@ void Grid::configure_cells() {
 void Grid::each_cell(const std::function<void(Cell&)>& lambda) {
     for (auto& row : grid_)
         for (auto& cell : row)
-            lambda(*cell);
+            if (cell)
+                lambda(*cell);
 }
 
 Cell* Grid::cell_at(int row, int column) const {
     if (row < 0 || row >= grid_.size()) return nullptr;
     if (column < 0 || column >= grid_.at(row).size()) return nullptr;
-    auto cell = grid_.at(row).at(column).get();
-    if (cell->row() == -1 || cell->column() == -1) return nullptr;
-    return cell;
+    return grid_.at(row).at(column).get();
 }
 
 Cell* Grid::random_cell(std::mt19937& rng) const {
     std::uniform_int_distribution<int> r_dist(0, rows_ - 1);
     std::uniform_int_distribution<int> c_dist(0, columns_ - 1);
-    return cell_at(r_dist(rng), c_dist(rng));
+
+    while (true)
+        if (auto* cell = cell_at(r_dist(rng), c_dist(rng)))
+            return cell;
 }
 
 vector<const Cell*> Grid::deadends() const {
     vector<const Cell*> result;
     for (auto& row : grid_)
         for (auto& cell : row)
-            if (cell->links().size() == 1)
+            if (cell && cell->links().size() == 1)
                 result.push_back(cell.get());
 
     return result;
@@ -73,7 +75,7 @@ void Grid::draw(const DrawCfg& draw_cfg) const {
 
         for (int row = 0; row < rows_; ++row)
             for (int col = 0; col < columns_; ++col)
-                if (auto cell = cell_at(row, col))
+                if (auto* cell = cell_at(row, col))
                     draw_cell(*cell, draw_cfg);
 
     ofPopMatrix();
@@ -86,8 +88,8 @@ void Grid::draw_cells(const vector<const Cell*>& cells, const DrawCfg& draw_cfg)
             ofGetHeight() / 2 - (draw_cfg.cell_size * rows_) / 2
         );
 
-        for (auto cell : cells)
-            if (auto grid_cell = cell_at(cell->row(), cell->column()))
+        for (auto* cell : cells)
+            if (auto* grid_cell = cell_at(cell->row(), cell->column()))
                 draw_cell(*grid_cell, draw_cfg);
 
     ofPopMatrix();

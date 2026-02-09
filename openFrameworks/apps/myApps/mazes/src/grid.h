@@ -35,7 +35,7 @@ public:
 
     int rows() const    { return rows_; }
     int columns() const { return columns_; }
-    int size() const    { return rows_ * columns_; }
+    virtual int size() const { return rows_ * columns_; }
 
     void each_cell(const std::function<void(Cell&)>& lambda);
     Cell* cell_at(int row, int column) const;

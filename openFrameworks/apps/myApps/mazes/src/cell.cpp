@@ -31,10 +31,10 @@ bool Cell::is_linked(const Cell* other) const {
 vector<Cell*> Cell::neighbors() const {
     vector<Cell*> result;
     result.reserve(4);
-    if (north != nullptr) result.push_back(north);
-    if (south != nullptr) result.push_back(south);
-    if (east  != nullptr) result.push_back(east);
-    if (west  != nullptr) result.push_back(west);
+    if (north) result.push_back(north);
+    if (south) result.push_back(south);
+    if (east)  result.push_back(east);
+    if (west)  result.push_back(west);
     return result;
 }
 

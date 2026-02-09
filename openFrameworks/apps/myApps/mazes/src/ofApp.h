@@ -34,6 +34,7 @@ public:
     void gotMessage(ofMessage msg) override;
 
     std::mt19937 rng;
+    vector<pair<string, GridCtor>> all_grids;
     unique_ptr<Grid> grid;
     // a pair of distanced cells batches and an index of currently drawn batch
     pair<vector<vector<const Cell*>>, int> distanced_cells;

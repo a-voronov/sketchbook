@@ -13,11 +13,7 @@
 #include "huntAndKill.h"
 #include "recursiveBacktracker.h"
 
-// TODO: think of introducing a notion of show/demo, since we can have multiple demos with the same grid
-
 const static int frame_rate = 60;
-
-static vector<pair<string, GridCtor>> all_grids;
 
 const static vector<pair<string, AlgorithmCtor>> all_algorithms{
     {"BinaryTree",           [](Grid& g, std::mt19937& rng) { BinaryTree::on(g, rng); }},
@@ -52,20 +48,6 @@ void ofApp::setup(){
             return make_unique<MaskedGrid>(std::move(mask));
         }}
     };
-
-
-    auto g = make_unique<MaskedGrid>(Mask::from_txt(
-        "/Users/alex/Projects/personal/sketchbook/openFrameworks/apps/myApps/mazes/bin/data/mask.txt"
-    ));
-    auto& ng = *g.get();
-    RecursiveBacktracker::on(ng, rng);
-    cout << ng << endl;
-
-
-
-
-
-
 
     gui.setup();
     gui.add(rows.setup("rows", 56, 2, 100));
