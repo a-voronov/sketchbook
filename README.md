@@ -132,3 +132,9 @@ To make it easier to compare I've added a bunch of GUI controls to switch betwee
 And I've added two modes - one creates a longest path in a maze and animates it from start to finish, another mode spreads colors step by step as we go deeper into the maze from the root (center in the examples).
 
 ![color grid](./openFrameworks/apps/myApps/mazes/bin/data/color-grid.png)
+
+#### Masked Grid
+
+Finally we can shape up our mazes by applying a mask to them! So far I've started with ASCII mask and have added and Objective-C++ FileDialog component to enable GUI file picking for masks.
+
+![masked grid](./openFrameworks/apps/myApps/mazes/bin/data/masked-grid.png)
