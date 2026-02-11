@@ -135,6 +135,6 @@ And I've added two modes - one creates a longest path in a maze and animates it 
 
 #### Masked Grid
 
-Finally we can shape up our mazes by applying a mask to them! So far I've started with ASCII mask and use ofSystemLoadDialog component to enable GUI file picking for masks.
+Finally we can shape up our mazes by applying a mask to them! So far it supports ASCII txt and black & white png masks. I'm using ofSystemLoadDialog component to enable GUI file picking for masks.
 
 ![masked grid](./openFrameworks/apps/myApps/mazes/bin/data/masked-grid.png)

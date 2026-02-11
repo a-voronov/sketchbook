@@ -11,6 +11,7 @@ public:
     Mask(int r, int c);
 
     static unique_ptr<Mask> from_txt(string file_path);
+    static unique_ptr<Mask> from_png(string file_path);
 
     int rows() const { return rows_; }
     int columns() const { return columns_; }

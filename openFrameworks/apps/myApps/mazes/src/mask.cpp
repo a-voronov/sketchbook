@@ -1,4 +1,5 @@
 #include "mask.h"
+#include "ofImage.h"
 
 #include <fstream>
 
@@ -32,6 +33,24 @@ unique_ptr<Mask> Mask::from_txt(string file_path) {
     for (int r = 0; r < rows; ++r) {
         for (int c = 0; c < columns; ++c) {
             bool is_on = lines.at(r).at(c) != 'X';
+            mask->set_bit_at(r, c, is_on);
+        }
+    }
+    return mask;
+}
+
+unique_ptr<Mask> Mask::from_png(string file_path) {
+    ofImage image;
+    if (!image.load(file_path))
+        return nullptr;
+
+    auto mask = make_unique<Mask>(image.getHeight(), image.getWidth());
+    auto pixels = image.getPixels();
+
+    for (int r = 0; r < mask->rows(); ++r) {
+        for (int c = 0; c < mask->columns(); ++c) {
+            auto color = pixels.getColor(pixels.getPixelIndex(c, r));
+            bool is_on = color != ofColor::black;
             mask->set_bit_at(r, c, is_on);
         }
     }

@@ -44,7 +44,16 @@ void ofApp::setup(){
             if (mask_path_.empty())
                 return nullptr;
 
-            auto mask = Mask::from_txt(mask_path_);
+            auto extension = ofGetExtensionLower(mask_path_);
+            unique_ptr<Mask> mask = nullptr;
+            if (extension == ".txt") {
+                mask = Mask::from_txt(mask_path_);
+            } else if (extension == ".png") {
+                mask = Mask::from_png(mask_path_);
+            }
+            if (!mask)
+                return nullptr;
+
             rows = mask->rows();
             columns = mask->columns();
             return make_unique<MaskedGrid>(std::move(mask));
@@ -144,10 +153,10 @@ const GridCtor& ofApp::get_selected_grid() const {
 
 void ofApp::pick_mask() {
     auto of_result = ofSystemLoadDialog("Select a txt or png file", false, filesystem::current_path().string() + "/../../../");
-    if (!of_result.bSuccess) return;
+    if (!of_result.bSuccess)
+        return;
 
     auto extension = ofGetExtensionLower(of_result.filePath);
-
     if (extension == ".txt" || extension == ".png")
         mask_path_ = of_result.filePath;
 
@@ -187,7 +196,6 @@ void ofApp::visit(ColorGrid& grid, std::mt19937& rng) {
     auto distances = start->distances();
 
     distanced_cells = {distances.distanced_cells(), 0};
-
     grid.set_distances(distances);
 
     if (output_ascii)
@@ -199,10 +207,11 @@ void ofApp::visit(MaskedGrid& grid, std::mt19937& rng) {
     algorithm(grid, rng);
 
     auto start = grid.cell_at(grid.rows() / 2, grid.columns() / 2);
+    if (!start)
+        start = grid.random_cell(rng);
     auto distances = start->distances();
 
     distanced_cells = {distances.distanced_cells(), 0};
-
     grid.set_distances(distances);
 
     if (output_ascii)
