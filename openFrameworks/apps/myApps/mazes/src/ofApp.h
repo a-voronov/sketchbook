@@ -70,9 +70,12 @@ private:
     // so these backup values help us to restore previously selected state
     string selected_algorithm_;
     string selected_grid_;
+    // apparently ofxDropdown is calling listener twice when param changes,
+    // which in case of masked grid causes to prompt user with file dialog twice if user decides not to pick any file
+    string selected_grid_attempt_;
     string mask_path_;
 
-    void generate_grid();
+    bool generate_grid();
     void pick_mask();
 
     const AlgorithmCtor& get_selected_algorithm() const;

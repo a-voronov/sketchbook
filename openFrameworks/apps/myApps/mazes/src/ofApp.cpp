@@ -4,7 +4,6 @@
 #include "colorGrid.h"
 #include "maskedGrid.h"
 #include "gridVisitor.h"
-#include "fileDialog.hh"
 
 #include "binaryTree.h"
 #include "sidewinder.h"
@@ -39,9 +38,12 @@ void ofApp::setup(){
         {"ColorGrid", [this]() {
             return make_unique<ColorGrid>(rows, columns);
         }},
-        {"MaskedGrid", [this]() {
+        {"MaskedGrid", [this]() -> unique_ptr<MaskedGrid> {
             if (mask_path_.empty())
                 pick_mask();
+            if (mask_path_.empty())
+                return nullptr;
+
             auto mask = Mask::from_txt(mask_path_);
             rows = mask->rows();
             columns = mask->columns();
@@ -80,42 +82,44 @@ void ofApp::setup(){
     for (auto kv : all_grids)
         grids_dropdown->add(kv.first);
 
+    listeners.unsubscribeAll();
     selected_algorithm_ = selected_algorithm = all_algorithms.at(5).first;
     selected_grid_ = selected_grid = all_grids.at(1).first;
-    listeners.push(selected_algorithm.newListener([&](const ofParameter<string>& p){
+    listeners.push(selected_algorithm.newListener([&](const string& param) {
+        algorithms_dropdown->hideDropdown();
         // ofxDropdown allows deselection
         // and reverting ofOption inside of the listener lambda doesn't trigger UI redraw no matter what,
         // hence we rely on backup local values to restore previously selected value inside `update` method
-        if (p.get() == "") {
-            algorithms_dropdown->hideDropdown();
+        if (param == "")
             return;
-        }
-        selected_algorithm_ = p.get();
-        generate_grid();
+        if (selected_algorithm_ != param && generate_grid())
+            selected_algorithm_ = param;
     }));
-    listeners.push(selected_grid.newListener([&](const ofParameter<string>& p){
-        if (p.get() == "") {
-            grids_dropdown->hideDropdown();
+    listeners.push(selected_grid.newListener([&](const string& param) {
+        grids_dropdown->hideDropdown();
+        if (param == "")
             return;
-        }
-        selected_grid_ = p.get();
-        generate_grid();
+        if (selected_grid_attempt_ != param && selected_grid_ != param && generate_grid())
+            selected_grid_ = param;
+        selected_grid_attempt_ = param;
     }));
 
     generate_grid();
 }
 
 //--------------------------------------------------------------
-void ofApp::generate_grid() {
+bool ofApp::generate_grid() {
     distanced_cells = {};
     deadends = {};
 
     auto& grid_ctor = get_selected_grid();
-    auto new_grid = grid_ctor();
-    grid = std::move(new_grid);
-    grid->accept(*this, rng);
-
-    deadends = grid->deadends();
+    if (auto new_grid = grid_ctor()) {
+        grid = std::move(new_grid);
+        grid->accept(*this, rng);
+        deadends = grid->deadends();
+        return true;
+    }
+    return false;
 }
 
 const AlgorithmCtor& ofApp::get_selected_algorithm() const {
@@ -139,7 +143,15 @@ const GridCtor& ofApp::get_selected_grid() const {
 }
 
 void ofApp::pick_mask() {
-    mask_path_ = pick_file(filesystem::current_path().string() + "/../../../", {"txt", "png"});
+    auto of_result = ofSystemLoadDialog("Select a txt or png file", false, filesystem::current_path().string() + "/../../../");
+    if (!of_result.bSuccess) return;
+
+    auto extension = ofGetExtensionLower(of_result.filePath);
+
+    if (extension == ".txt" || extension == ".png")
+        mask_path_ = of_result.filePath;
+
+    ofGetWindowPtr()->makeCurrent();
 }
 
 //--------------------------------------------------------------
@@ -186,13 +198,12 @@ void ofApp::visit(MaskedGrid& grid, std::mt19937& rng) {
     auto& algorithm = get_selected_algorithm();
     algorithm(grid, rng);
 
-    // auto start = grid.cell_at(grid.rows() / 2, grid.columns() / 2);
-    // auto distances = start->distances();
+    auto start = grid.cell_at(grid.rows() / 2, grid.columns() / 2);
+    auto distances = start->distances();
 
-    // distanced_cells = {distances.distanced_cells(), 0};
-    distanced_cells = {{}, 0};
+    distanced_cells = {distances.distanced_cells(), 0};
 
-    // grid.set_distances(distances);
+    grid.set_distances(distances);
 
     if (output_ascii)
         cout << grid << endl;
@@ -200,10 +211,10 @@ void ofApp::visit(MaskedGrid& grid, std::mt19937& rng) {
 
 //--------------------------------------------------------------
 void ofApp::update(){
-    if (selected_grid.get() == "") {
+    if (selected_grid.get() != selected_grid_) {
         selected_grid = selected_grid_;
     }
-    if (selected_algorithm.get() == "") {
+    if (selected_algorithm.get() != selected_algorithm_) {
         selected_algorithm = selected_algorithm_;
     }
 

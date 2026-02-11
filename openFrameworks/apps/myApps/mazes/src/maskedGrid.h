@@ -1,14 +1,16 @@
 #pragma once
 
-#include "grid.h"
+#include "colorGrid.h"
 #include "mask.h"
+#include "distances.h"
+#include "mazeUtils.h"
 
 using namespace std;
 
-struct MaskedGrid : Grid {
+struct MaskedGrid : ColorGrid {
 public:
     explicit MaskedGrid(unique_ptr<Mask> mask)
-        : Grid(mask->rows(), mask->columns()), mask_(std::move(mask)) {
+        : ColorGrid(mask->rows(), mask->columns()), mask_(std::move(mask)) {
             prepare_grid();
             configure_cells();
         }
